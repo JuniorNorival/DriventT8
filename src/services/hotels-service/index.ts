@@ -13,6 +13,7 @@ async function getAllHotels(userId: number) {
   await verifyPayment(ticket.id);
   verifyTicketType(ticket);
   const hotels = await hotelRepository.findHotels();
+
   return hotels;
 }
 
@@ -24,20 +25,22 @@ async function getRoomsByHotelId(userId: number, hotelId: number) {
   await verifyPayment(ticket.id);
   verifyTicketType(ticket);
 
-  const rooms = hotelRepository.findRoomsByHotelId(hotelId);
-  if (!rooms) throw notFoundError();
+  const rooms = await hotelRepository.findRoomsByHotelId(hotelId);
+
   return rooms;
 }
 async function verifyEnrollment(userId: number) {
-  const enrollment = enrollmentRepository.findWithAddressByUserId(userId);
+  const enrollment = await enrollmentRepository.findWithAddressByUserId(userId);
 
-  if (!enrollment) throw notFoundError();
+  if (!enrollment) {
+    throw notFoundError();
+  }
 
   return enrollment;
 }
 
 async function verifyTicket(enrollmentId: number) {
-  const ticket = ticketRepository.findTicketByEnrollmentId(enrollmentId);
+  const ticket = await ticketRepository.findTicketByEnrollmentId(enrollmentId);
 
   if (!ticket) throw notFoundError();
 
@@ -45,7 +48,7 @@ async function verifyTicket(enrollmentId: number) {
 }
 
 async function verifyPayment(ticketId: number) {
-  const payment = paymentRepository.findPaymentByTicketId(ticketId);
+  const payment = await paymentRepository.findPaymentByTicketId(ticketId);
 
   if (!payment) throw paymentRequiredError();
 

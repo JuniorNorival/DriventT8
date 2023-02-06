@@ -6,7 +6,8 @@ import { AuthenticatedRequest } from '@/middlewares';
 export async function getAllHotels(req: AuthenticatedRequest, res: Response) {
   const { userId } = req;
   try {
-    const hotel = hotelService.getAllHotels(userId);
+    const hotel = await hotelService.getAllHotels(userId);
+
     res.status(httpStatus.OK).send(hotel);
   } catch (error) {
     if (error.name === 'UnauthorizedError') {
@@ -25,7 +26,7 @@ export async function getRoomsByHotelId(req: AuthenticatedRequest, res: Response
 
   if (!hotelId || isNaN(hotelId)) return res.sendStatus(httpStatus.BAD_REQUEST);
   try {
-    const rooms = hotelService.getRoomsByHotelId(userId, hotelId);
+    const rooms = await hotelService.getRoomsByHotelId(userId, hotelId);
     res.status(httpStatus.OK).send(rooms);
   } catch (error) {
     if (error.name === 'UnauthorizedError') {
